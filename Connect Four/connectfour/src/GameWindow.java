@@ -188,11 +188,12 @@ public class GameWindow {
     }
     
     public static void reset(){
-        players.removeAll();
         firstpanel.removeAll();
         secondpanel.removeAll();
         mainpanel.removeAll();
         frame.remove(mainpanel);
+        setWindow();
+        frame.setVisible(true);
     }
     
 }

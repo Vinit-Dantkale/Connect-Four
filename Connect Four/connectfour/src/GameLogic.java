@@ -81,16 +81,12 @@ public class GameLogic {
                 score[1]+=1;
                 GameWindow.setscore();
                 GameWindow.reset();
-                GameWindow.frame.dispose();
-                MainClass.main(new String[1]);
                 return true;
             }
             if(zeros==4){
                 score[0]+=1;
                 GameWindow.setscore();
                 GameWindow.reset();
-                GameWindow.frame.dispose();
-                MainClass.main(new String[1]);
                 return true;
             }   
             return false;
