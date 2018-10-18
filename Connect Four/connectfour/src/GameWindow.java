@@ -7,9 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 
-public class NewClass4 {
+public class GameWindow {
     public static JFrame frame=new JFrame();
     public static JPanel mainpanel=new JPanel();
     public static JPanel players=new JPanel();
@@ -34,17 +32,18 @@ public class NewClass4 {
     public static ImageIcon yellowdisk;
     public static ImageIcon reddisk;
     public static int turn=0;
-    public static int[][] disks=new int[6][7];
     
+    public static GameLogic gamelogic=new GameLogic();
     
-    NewClass4(){
+    GameWindow(){
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         empty=getdirpath("\\\\empty.png");
         if(empty.getImageLoadStatus()==4){
-            empty=getdirpath("\\\\src\\\\empty.png");
-             red=getdirpath("\\\\src\\\\red.jpg");   
-            yellow=getdirpath("\\\\src\\\\yellow.png");
-            yellowdisk=getdirpath("\\\\src\\\\yellowdisk.png");
-            reddisk=getdirpath("\\\\src\\\\reddisk.png");
+            empty=getdirpath("\\\\connectfour\\\\src\\\\empty.png");
+             red=getdirpath("\\\\connectfour\\\\src\\\\red.jpg");   
+            yellow=getdirpath("\\\\connectfour\\\\src\\\\yellow.png");
+            yellowdisk=getdirpath("\\\\connectfour\\\\src\\\\yellowdisk.png");
+            reddisk=getdirpath("\\\\connectfour\\\\src\\\\reddisk.png");
         }
         else{
             red=getdirpath("\\\\red.jpg");   
@@ -52,19 +51,6 @@ public class NewClass4 {
             yellowdisk=getdirpath("\\\\yellowdisk.png");
             reddisk=getdirpath("\\\\reddisk.png");
         }
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    public static void main(String[] args) {
-        
-        NewClass4 obj=new NewClass4();
-        
         frame.setSize(700,700);
         
         mainpanel.setBackground(Color.WHITE);
@@ -78,12 +64,10 @@ public class NewClass4 {
         players.setOpaque(false);
         
         player1.setFont(new Font("Trebuchet MS",Font.BOLD,25));
-        player1.setText("Player 1 : ");
         player1.setForeground(Color.red);
         player1.setVisible(true);
         
         player2.setFont(new Font("Trebuchet MS",Font.BOLD,25));
-        player2.setText("Player 2 : ");
         player2.setForeground(Color.GREEN);
         player2.setVisible(true);
         
@@ -96,21 +80,23 @@ public class NewClass4 {
         
         //secondpanel.setPreferredSize(new Dimension(700,700));
         secondpanel.setLayout(new GridLayout(6,7));
-        
+    }
+    
+    public static void setWindow(){
+        player1.setText("Player 1 : "+gamelogic.score[0]);
+        player2.setText("Player 2 : "+gamelogic.score[1]);
         for(int i=0;i<7;i++){
             emptyp[i]=new JLabel();
             emptyp[i].setPreferredSize(new Dimension(80,80));
             firstpanel.add(emptyp[i]);
         }
-        
+        //turn=0;
         for(int i=0;i<42;i++){
             smallp[i]=new JLabel();
             smallp[i]=setLabelProperties(smallp[i],i);
-
             secondpanel.add(smallp[i]);
-            disks[i/7][i%7]=-1;
+            GameLogic.disks[i/7][i%7]=-1;
         }
-        
         
         secondpanel.setBorder(BorderFactory.createLineBorder(Color.BLUE,8,true));
         secondpanel.setVisible(true);
@@ -119,10 +105,8 @@ public class NewClass4 {
         mainpanel.add(firstpanel);
         mainpanel.add(secondpanel);
         frame.add(mainpanel);
-        
-        
-        frame.setVisible(true);
-        
+       
+        frame.setVisible(true); 
     }
     
     public static JLabel setLabelProperties(JLabel label,int i){
@@ -134,8 +118,7 @@ public class NewClass4 {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     int j=putdisk(i);
-                    checkgame(j,i%7);
-                    
+                    gamelogic.checkgame(j,i%7);                 
                 }
 
                 @Override
@@ -144,10 +127,7 @@ public class NewClass4 {
                 }
 
                 @Override
-                public void mouseReleased(MouseEvent e) {
-                    //putdisk(i);
-                    //turn=(turn==0?1:0);
-                }
+                public void mouseReleased(MouseEvent e) {}
 
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -164,50 +144,6 @@ public class NewClass4 {
         return label;
     }
     
-    public static void checkgame(int row,int col){
-        int ones=0,zeros=0;
-        for(int i=0;i<7;i++){
-            if(disks[row][i]==1){ones+=1;zeros=0;}
-            if(disks[row][i]==0){zeros+=1;ones=0;}    
-            if(ones==4){System.out.println("Player 2");break;}
-            if(zeros==4){System.out.println("Player 1");break;}
-        }
-        
-        ones=0;
-        zeros=0;
-        for(int i=0;i<6;i++){
-            if(disks[i][col]==1){ones+=1;zeros=0;}
-            if(disks[i][col]==0){zeros+=1;ones=0;}      
-            if(ones==4){System.out.println("Player 2");break;}
-            if(zeros==4){System.out.println("Player 1");break;}
-        }
-        
-        ones=0;zeros=0;
-        //Up left diagonal
-        int temp=4;
-        while(temp<7){
-            ones=0;zeros=0;
-            for(int i=0;i<temp;i++){
-                if(disks[i][i]==1){ones+=1;zeros=0;}
-                if(disks[i][i]==0){zeros+=1;ones=0;}   
-            }
-            if(ones==4){System.out.println("Player 2");break;}
-            if(zeros==4){System.out.println("Player 1");break;}
-            
-            ones=0;zeros=0;
-            for(int i=0;i<temp;i++){
-                if(disks[i][i+3]==1){ones+=1;zeros=0;;}
-                if(disks[i][i+3]==0){zeros+=1;ones=0;}   
-            }
-            if(ones==4){System.out.println("Player 2");break;}
-            if(zeros==4){System.out.println("Player 1");break;}
-            
-            temp+=1;
-        }
-        
-        
-        
-    }
     public static ImageIcon getdirpath(String str){
         ImageIcon img=new ImageIcon(dirpath+str);
         Image newimg=img.getImage().getScaledInstance(80,80,Image.SCALE_SMOOTH);
@@ -234,9 +170,9 @@ public class NewClass4 {
         int column=i%7;
         int j;
         for(j=5;j>=0;j--){
-            if(disks[j][column]==-1){
+            if(GameLogic.disks[j][column]==-1){
                 smallp[(7*j)+column].setIcon(disk);
-                disks[j][column]=turn;
+                GameLogic.disks[j][column]=turn;
                 turn=(turn==0?1:0);
                 showdisk(i);
                 break;
@@ -244,6 +180,19 @@ public class NewClass4 {
         }
         
         return j;
+    }
+    
+    public static void setscore(){
+        player1.setText("Player 1: "+gamelogic.score[0]);
+        player2.setText("Player 2: "+gamelogic.score[1]);
+    }
+    
+    public static void reset(){
+        players.removeAll();
+        firstpanel.removeAll();
+        secondpanel.removeAll();
+        mainpanel.removeAll();
+        frame.remove(mainpanel);
     }
     
 }
